@@ -1,13 +1,18 @@
-import './App.css';
-import {Login} from "./Login";
+import "./App.css";
+import ItemList from "./components/ItemList/ItemList";
+import Navbar from "./components/Navbar/Navbar";
+
 
 function App() {
+
+  let saludo = "Bievenido a Babys"
+
   return (
     <div className="App">
-      <Login />
-      <h1>Esto es propio de app</h1>
+      <Navbar />
+      <ItemList saludo={saludo} />
     </div>
-  );
+  )
 }
 
 export default App;

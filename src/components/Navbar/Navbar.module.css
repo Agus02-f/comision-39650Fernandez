@@ -1,0 +1,13 @@
+.containerNavbar {
+    width: 100%;
+    height: vh;
+    display: flex;
+    justify-content: space-between;
+    background-color: steelblue;
+    align-items: center;
+}
+
+.containerNavbar ul li {
+    list-style-type: none;
+    font-size: 20px;
+}
