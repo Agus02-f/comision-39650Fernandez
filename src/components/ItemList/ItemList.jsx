@@ -1,12 +1,20 @@
-import styles from "./ItemList.module.css"
 
-const ItemList = ({ saludo }) => {
+import React from 'react'
+import ItemCard from './ItemCard'
 
-  // let { saludo } = props
+const ItemList = ({ items }) => {
 
   return (
-    <div className={styles.containerItemList}>
-      <h1>{saludo}</h1>
+    <div style={{
+      display: "flex"
+    }}>
+      {
+        items.map((item) => {
+          return (
+            <ItemCard item={item} key={item.id} />
+          )
+        })
+      }
     </div>
   )
 }
