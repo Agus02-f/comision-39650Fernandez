@@ -1,11 +1,24 @@
 import { AiOutlineShoppingCart } from "react-icons/ai"
+import { Link } from "react-router-dom"
+import { CartContext } from "../../context/CartContext"
+import { useContext } from "react"
+import "./CartWidget.css"
 
 const CartWidget = () => {
+
+  const { getTotalQuantyty } = useContext(CartContext)
+
+  let total = getTotalQuantyty()
+
   return (
-    <div>
-      <AiOutlineShoppingCart size={30} />
-      <span>0</span>
-    </div>
+    <Link to="/cart">
+      <div className="container-cart">
+        <AiOutlineShoppingCart size={30} style={{ fontSize: "2rem", color: "beige", }} />
+        <div className="bubble-counter">
+          <span> {total} </span>
+        </div>
+      </div>
+    </Link>
   )
 }
 
