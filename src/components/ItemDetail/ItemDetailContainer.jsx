@@ -1,36 +1,58 @@
-import React, { useContext, useEffect, useState } from 'react'
-import ItemDetail from './ItemDetail'
-import { products } from '../../productsMock'
-import { useParams } from "react-router-dom"
-import { CartContext } from '../../context/CartContext'
+import React, { useContext, useEffect, useState } from "react";
+import ItemDetail from "./ItemDetail";
+import { useParams } from "react-router-dom";
+import { CartContext } from "../../context/CartContext";
+import Swal from "sweetalert2";
+import { db } from "../../firebaseConfig";
+import { getDoc, collection, doc } from "firebase/firestore";
 
 const ItemDetailContainer = () => {
+  const [product, setProduct] = useState({});
 
-    const [product, setProduct] = useState({})
+  const { agregarAlCarrito, getQuantityById } = useContext(CartContext);
 
-    const { agregarAlCarrito } = useContext(CartContext)
+  const { id } = useParams();
 
-    const { id } = useParams()
+  useEffect(() => {
+    const itemCollection = collection(db, "products");
+    const refDoc = doc(itemCollection, id);
+    getDoc(refDoc)
+      .then((res) =>
+        setProduct({
+          ...res.data(),
+          id: res.id,
+        })
+      )
+      .catch((err) => console.log(err));
+  }, [id]);
 
-    useEffect(() => {
-        let encontrado = products.find(prod => prod.id === Number(id))
-        setProduct(encontrado);
-    }, [id])
+  const onAdd = (cantidad) => {
+    let data = {
+      ...product,
+      quantity: cantidad,
+    };
 
-    const onAdd = (cantidad) => {
-        let data = {
-            ...product,
-            quantity: cantidad
-        }
+    agregarAlCarrito(data);
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Se agregaron los productos",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  };
 
-        agregarAlCarrito(data)
-    }
+  let cantidadTotal = getQuantityById(product.id);
 
-    return (
-        <div>
-            <ItemDetail product={product} onAdd={onAdd} />
-        </div>
-    )
-}
+  return (
+    <div>
+      <ItemDetail
+        product={product}
+        onAdd={onAdd}
+        cantidadTotal={cantidadTotal}
+      />
+    </div>
+  );
+};
 
-export default ItemDetailContainer
+export default ItemDetailContainer;

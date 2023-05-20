@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
 import CounterContainer from "../Counter/CounterContainer";
 
-const ItemDetail = ({ product, onAdd }) => {
+const ItemDetail = ({ product, onAdd, cantidadTotal }) => {
   return (
     <div>
       <div className={styles.containerItemDetail}>
@@ -24,16 +24,25 @@ const ItemDetail = ({ product, onAdd }) => {
           </h2>
         </div>
       </div>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <CounterContainer stock={product.stock} onAdd={onAdd} />
-      </div>
+      {product.stock > 0 ? (
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <CounterContainer
+            stock={product.stock}
+            onAdd={onAdd}
+            initial={cantidadTotal}
+          />
+        </div>
+      ) : (
+        <h2>No hay stock</h2>
+      )}
+
       <div style={{ display: "flex", justifyContent: "center" }}>
         <Link to="/">
           <Button variant="contained">Regresar</Button>
         </Link>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ItemDetail
+export default ItemDetail;

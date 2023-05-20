@@ -1,32 +1,57 @@
-import React, { useEffect, useState } from 'react'
-import { products } from '../../productsMock';
-import ItemList from './ItemList';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import ItemList from "./ItemList";
+import { useParams } from "react-router-dom";
+import { PropagateLoader } from "react-spinners";
+import { db } from "../../firebaseConfig";
+import { getDocs, collection, query, where, addDoc } from "firebase/firestore";
+import { products } from "../../productsMock";
 
 const ItemListContainer = () => {
+  const [items, setItems] = useState([]);
 
-  const [items, setItems] = useState([])
-
-  const { categoryName } = useParams()
+  const { categoryName } = useParams();
 
   useEffect(() => {
+    // const itemCollection = collection(db, "products");
 
-    const productsFiltered = products.filter(prod => prod.category === categoryName)
+    let consulta;
+    const itemCollection = collection(db, "products");
 
-    const tarea = new Promise((resolve, reject) => {
-      resolve(categoryName ? productsFiltered : products);
-    });
+    if (categoryName) {
+      const itemsCollectionFiltered = query(
+        itemCollection,
+        where("category", "==", categoryName)
+      );
+      consulta = itemsCollectionFiltered;
+    } else {
+      consulta = itemCollection;
+    }
 
-    tarea
-      .then((res) => setItems(res))
-      .catch((error) => console.log(error));
-  }, [categoryName])
+    getDocs(consulta)
+      .then((res) => {
+        const products = res.docs.map((product) => {
+          return {
+            ...product.data(),
+            id: product.id,
+          };
+        });
+
+        setItems(products);
+      })
+      .catch((err) => console.log(err));
+  }, [categoryName]);
 
   return (
     <div>
-      <ItemList items={items} />
+      {items.length === 0 ? (
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <PropagateLoader color="red" size={20} />;
+        </div>
+      ) : (
+        <ItemList items={items} />
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default ItemListContainer
+export default ItemListContainer;
